@@ -8,7 +8,13 @@ const Channels = (props) => {
           <div key={index} class={props.currentChannel === index ? 'selectedStep' : ''}>
             <Step
               onClick={
-            () => props.playSample(props.samples, index)
+            () => {
+              if (props.sequencerMode === 'PLAY') {
+                props.setCurrentChannel(index)
+                return
+              }
+              props.playSample(props.samples, index)
+            }
           }
             >
               <span>

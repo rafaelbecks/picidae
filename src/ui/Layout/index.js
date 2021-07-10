@@ -55,7 +55,11 @@ const Layout = (
     onChangeConfig,
     channelConfig,
     currentChannel,
-    bpm, setBpm
+    bpm, setBpm,
+    startSequencer,
+    sequencerMode,
+    setCurrentChannel,
+    setSequencerMode
   }
 ) => {
   const sampleSelect = useRef(null)
@@ -64,6 +68,9 @@ const Layout = (
   const euclideanPattern = channelConfig[currentChannel + 1] ? channelConfig[currentChannel + 1].euclideanPattern : []
   const currentNotes = euclideanPattern.filter(beat => beat === 1).length
   const currentSteps = euclideanPattern.length
+  const reverbDecay = channelConfig[currentChannel + 1] && Number(channelConfig[currentChannel + 1].reverbDecay).toFixed(2)
+  const reverbWet = channelConfig[currentChannel + 1] && Number(channelConfig[currentChannel + 1].reverbWet).toFixed(2)
+  const reverbPreDelay = channelConfig[currentChannel + 1] && Number(channelConfig[currentChannel + 1].reverbPreDelay).toFixed(2)
 
   useEffect(() => {
     if (currentChannel !== -1) {
@@ -73,6 +80,16 @@ const Layout = (
       })
     }
   }, [currentChannel])
+
+  useEffect(() => {
+    if (sequencerMode === 'PLAY') {
+      startSequencer()
+    }
+
+    if (sequencerMode === 'EDIT') {
+      window.clearInterval(window.sequencerTimer)
+    }
+  }, [sequencerMode])
 
   return (
     <DeviceLayout>
@@ -256,7 +273,7 @@ const Layout = (
                   height: 'fit-content'
                 }}
               >
-                <SliderSwitch values={['EDIT', 'PLAY']} onChange={(val) => console.log(val)} />
+                <SliderSwitch values={['EDIT', 'PLAY']} onChange={(val) => setSequencerMode(val)} />
               </Row>
               <ControlSection>
                 <Row>
@@ -299,41 +316,6 @@ const Layout = (
               </>
             )}
             <div>
-              <ControlSection style={{ margin: '0 auto' }}>
-                <h2>FILTER</h2>
-                <Row>
-                  <MainControl>
-                    <h3>HP</h3>
-                    <KnobContainer>
-                      <Knob
-                        unlockDistance={0}
-                        onChange={(val) => {
-                          console.log('val', val)
-                        }}
-                        min={0}
-                        max={10}
-                        skin={skins.s13}
-                        preciseMode={false}
-                      />
-                    </KnobContainer>
-                  </MainControl>
-                  <MainControl>
-                    <h3>LP</h3>
-                    <KnobContainer>
-                      <Knob
-                        unlockDistance={0}
-                        onChange={(val) => {
-                          console.log('val', val)
-                        }}
-                        min={0}
-                        max={10}
-                        skin={skins.s13}
-                        preciseMode={false}
-                      />
-                    </KnobContainer>
-                  </MainControl>
-                </Row>
-              </ControlSection>
               <ControlSection style={{ marginTop: '42px', width: '240px' }}>
                 <h2>REVERB</h2>
                 <Row style={{ marginBottom: 0 }}>
@@ -343,14 +325,15 @@ const Layout = (
                       <Knob
                         unlockDistance={0}
                         onChange={(val) => {
-                          console.log('val', val)
+                          onChangeConfig(currentChannel, 'reverbDecay', val)
                         }}
-                        min={0}
-                        max={1}
+                        min={0.1}
+                        max={5}
                         skin={skins.s13}
+                        value={reverbDecay}
                         preciseMode={false}
                       />
-                      <span>{pitchValue}</span>
+                      <span>{reverbDecay}</span>
                     </KnobContainer>
                   </Control>
                   <MainControl>
@@ -359,14 +342,15 @@ const Layout = (
                       <Knob
                         unlockDistance={0}
                         onChange={(val) => {
-                          console.log('val', val)
+                          onChangeConfig(currentChannel, 'reverbWet', val)
                         }}
                         min={0}
                         max={1}
+                        value={reverbWet}
                         skin={skins.s13}
                         preciseMode={false}
                       />
-                      <span>{channelConfig[currentChannel + 1] && channelConfig[currentChannel + 1].volume.toFixed(2)}</span>
+                      <span>{reverbWet}</span>
                     </KnobContainer>
                   </MainControl>
                   <Control>
@@ -375,14 +359,14 @@ const Layout = (
                       <Knob
                         unlockDistance={0}
                         onChange={(val) => {
-                          console.log('val', val)
+                          onChangeConfig(currentChannel, 'reverbPreDelay', val)
                         }}
                         min={0}
                         max={1}
                         skin={skins.s13}
                         preciseMode={false}
                       />
-                      <span>{channelConfig[currentChannel + 1] && channelConfig[currentChannel + 1].release.toFixed(2)}</span>
+                      <span>{reverbPreDelay}</span>
                     </KnobContainer>
                   </Control>
                 </Row>
@@ -390,7 +374,7 @@ const Layout = (
             </div>
           </RowDivider>
           <RowDivider>
-            <Channels samples={sampleFiles} playSample={playSample} currentChannel={currentChannel} />
+            <Channels samples={sampleFiles} playSample={playSample} currentChannel={currentChannel} sequencerMode={sequencerMode} setCurrentChannel={setCurrentChannel} />
           </RowDivider>
         </DeviceSection>
 
