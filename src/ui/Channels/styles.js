@@ -7,6 +7,7 @@ const Container = styled.div`
     ul{
         list-style: none;
         display: flex;
+        padding: 0;
     }
 `
 

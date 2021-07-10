@@ -28,7 +28,7 @@ function App () {
   const [channelConfig, setChannelConfig] = useState({})
   const [currentChannel, setCurrentChannel] = useState(-1)
   // const [currentStep, setCurrentStep] = useState(0)
-  // const [bpm, setBpm] = useState(120)
+  const [bpm, setBpm] = useState(120)
 
   const keyboard = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k']
 
@@ -44,9 +44,11 @@ function App () {
   useEffect(async () => {
     const { data: availableSamples } = await axios('http://localhost:3002/sample-packs')
     setAvailableSamplePacks(availableSamples)
-    // setEuclideanPattern(er.getPattern(7, 11))
-    // console.log(euclideanPattern)
   }, [])
+
+  useEffect(() => {
+    if (availableSamplePacks[0]) { onSelectSamplePack(0) }
+  }, [availableSamplePacks])
 
   const getSamplePack = async (name) => {
     if (!name) return
@@ -135,6 +137,8 @@ function App () {
         onChangeConfig={onChangeConfig}
         channelConfig={channelConfig}
         currentChannel={currentChannel}
+        bpm={bpm}
+        setBpm={setBpm}
       />
     </div>
   )

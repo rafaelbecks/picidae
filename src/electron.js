@@ -16,11 +16,11 @@ function createWindow () {
   // Create the browser window.
   // fileAppServer.initFileServer()
   mainWindow = new BrowserWindow({
-    width: 793,
-    height: 711,
+    width: 783,
+    height: 754,
     titleBarStyle: 'hiddenInset',
     resizable: false,
-    title: 'GRANOLA',
+    title: 'PICIDAE',
     webPreferences: {
       devTools: true
     }

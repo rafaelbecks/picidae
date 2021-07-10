@@ -1,11 +1,12 @@
 import styled from 'styled-components'
+import texture from '../../assets/cartographer.png'
 
 const DeviceLayout = styled.div`
     width: 735px;
-    height: 657px;
-    background: #007d7d;
+    background: url(${texture}), #007d7d;
+    background-blend-mode: overlay;
     position: relative;
-    padding: 20px 34px 34px 24px;
+    padding: 20px 24px 34px 24px;
     `
 
 const Container = styled.div`
@@ -32,14 +33,14 @@ const LeftCircleTop = styled.img`
 
 const RightCircleBottom = styled.img`
     position: absolute;
-    bottom: 0;
+    bottom: -7px;
     margin: 16px;
     right: 0;
 `
 
 const LeftCircleBottom = styled.img`
     position: absolute;
-    bottom: 0;
+    bottom: -7px;
     margin: 16px;
     left: 0;
 `
@@ -47,7 +48,6 @@ const LeftCircleBottom = styled.img`
 const DeviceName = styled.div`
   color: #fff;
   margin: 0;
-  margin-bottom: 12px;
   display:flex;
   justify-content: space-between;
   font-family: 'Futura';
@@ -74,10 +74,11 @@ const DeviceName = styled.div`
 const DeviceSection = styled.div`
     width: 100%;
     height: 100%;
-    border: 1.5px solid #FFFFFF;
+    border: 1px solid #ffffffa8;
     box-sizing: border-box;
+    background: #01404087;
     border-radius: 10px;
-    padding: 24px 0px;
+    padding-top: 20px;
     h2 {
         font-family: 'Futura';
         font-size: 18px;
@@ -93,8 +94,7 @@ const DeviceContent = styled.div`
     align-items: center;
 `
 
-const GreenScreen = styled.div`
-    height: 38px;
+const greenScreenStyles = `height: 38px;
     width: fit-content;
     min-width: 20px;
     padding: 0px 10px;
@@ -109,8 +109,11 @@ const GreenScreen = styled.div`
     font-weight: normal;
     font-size: 12px;
     color: #FAFFBC;
-    text-align: center;
-`
+    border: none;
+    text-align: center;`
+
+const GreenScreen = styled.div`${greenScreenStyles}`
+const GreenScreenInput = styled.input`${greenScreenStyles}`
 
 const Row = styled.div`
     display: flex;
@@ -127,9 +130,10 @@ const RowDivider = styled.div`
     flex-direction: row;
     width: 100%;
     justify-content: space-around;
-    align-items: baseline;
+    align-items: ${props => props.spaceAround ? 'space-around' : 'baseline'};
     margin: 0;
     position:relative;
+    ${props => props.flexStart && 'align-items:flex-start;'}
 `
 
 const Column = styled.div`
@@ -143,6 +147,10 @@ const Column = styled.div`
 const Control = styled.div`
     height: 88px;
     width: 60%;
+`
+
+const ControlSection = styled.div`
+    width: 240px;
 `
 
 const MainControl = styled.div`
@@ -165,7 +173,7 @@ const SmallSeparator = styled.div`
 
 const GreenScreenContainer = styled.div`
     display: flex;
-    flex-direction: column;
+    flex-direction: ${props => props.row ? 'row' : 'column'};
     justify-content: space-evenly;
 `
 
@@ -231,21 +239,23 @@ const DeviceSelect = styled.select`
     height: 38px;
 `
 
-const LissajousCanvas = styled.canvas`
-    transform: scale(0.5);
+const LissajousCurve = styled.img`
+    position: absolute;
+    top: 23px;
     z-index: 0;
-    stroke: #fff;
+    width: 215px;
 `
 
 const Circle = styled.ul`
      position: relative;
+     z-index: 1;
      width: 200px;
      height: 200px;
      border-radius: 50%;
      padding: 0;
      list-style: none;
      top: 98px;
-     right: 6px;
+     left: -5px;
      transform: rotate(0deg) !important;
 
     >  * {
@@ -296,8 +306,10 @@ export {
   DeviceColumn,
   SlidersContainer,
   DeviceSelect,
-  LissajousCanvas,
+  LissajousCurve,
   MainControl,
   Column,
-  RowDivider
+  RowDivider,
+  GreenScreenInput,
+  ControlSection
 }

@@ -5,6 +5,7 @@ const ControlContainer = styled.div`
     flex-direction: column;
     justify-content: space-evenly;
     cursor: pointer;
+    margin-left:5px;
 `
 
 const ControlUp = styled.div`

@@ -28,8 +28,9 @@ const SliderRange = styled.div`
 
 const Labels = styled.div`
     display: flex;
-    justify-content: space-evenly;
-    margin: 10px 15px;
+    justify-content: space-between;
+    margin: 10px 0px;
+    width: 40%;
     label{
         color: #fff;
         font-size: 12px;

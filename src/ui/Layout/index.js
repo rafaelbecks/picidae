@@ -6,8 +6,11 @@ import er from 'euclidean-rhythms'
 
 import circlesBottom from '../../assets/screw-circles-bottom.svg'
 import picidaeIcon from '../../assets/picidae-icon.svg'
+import lissajous from '../../assets/lissajous.png'
 
 import SliderSwitch from '../../components/SliderSwitch'
+import NumericControl from '../../components/NumericControl'
+
 import { Led } from '../Leds/styles'
 import { arrayRotate } from '../../utils'
 
@@ -28,7 +31,9 @@ import {
   MainControl,
   Column,
   Circle,
-  RowDivider
+  LissajousCurve,
+  RowDivider,
+  ControlSection
 } from './styles'
 
 import Channels from '../Channels'
@@ -49,7 +54,8 @@ const Layout = (
     sampleFiles,
     onChangeConfig,
     channelConfig,
-    currentChannel
+    currentChannel,
+    bpm, setBpm
   }
 ) => {
   const sampleSelect = useRef(null)
@@ -216,7 +222,54 @@ const Layout = (
 
             </DeviceColumn>
           </RowDivider>
-          <RowDivider>
+          <RowDivider flexStart spaceAround style={{ margin: '20px 0 50px 0' }}>
+            <ControlSection>
+              <h2>SEQUENCER</h2>
+              <Row>
+                <Control style={{ marginRight: '10px' }}>
+                  <h3 className='smallMargin'>BPM</h3>
+                  <GreenScreenContainer row>
+                    <NumericControl
+                      width='30px'
+                      minValue={20} maxValue={220} initialValue={bpm}
+                      onChange={(value) => setBpm(value)}
+                    />
+                  </GreenScreenContainer>
+                </Control>
+
+                <Control>
+                  <h3 className='smallMargin'>DIVIDER</h3>
+                  <GreenScreenContainer row>
+                    <NumericControl
+                      width='30px'
+                      minValue={0} maxValue={10} initialValue={0.5}
+                      onChange={(value) => console.log(value)}
+                    />
+                  </GreenScreenContainer>
+                </Control>
+              </Row>
+              <Row
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column-reverse',
+                  marginTop: '21px',
+                  height: 'fit-content'
+                }}
+              >
+                <SliderSwitch values={['EDIT', 'PLAY']} onChange={(val) => console.log(val)} />
+              </Row>
+              <ControlSection>
+                <Row>
+                  <GreenScreenContainer>
+                    <h2>BANK</h2>
+                    <GreenScreen
+                      style={{ width: '150px', marginTop: '20px' }}
+                    >PATTERN #1
+                    </GreenScreen>
+                  </GreenScreenContainer>
+                </Row>
+              </ControlSection>
+            </ControlSection>
             {euclideanPattern.length && (
               <>
                 <Circle size={euclideanPattern.length}>
@@ -224,6 +277,7 @@ const Layout = (
                     <li key={index}><Led className={beat ? 'ledOn' : 'ledOff'} /></li>
                   ))}
                 </Circle>
+                <LissajousCurve src={lissajous} />
                 <KnobContainer className='rotationKnob'>
                   <Knob
                     unlockDistance={0}
@@ -244,6 +298,96 @@ const Layout = (
                 </KnobContainer>
               </>
             )}
+            <div>
+              <ControlSection style={{ margin: '0 auto' }}>
+                <h2>FILTER</h2>
+                <Row>
+                  <MainControl>
+                    <h3>HP</h3>
+                    <KnobContainer>
+                      <Knob
+                        unlockDistance={0}
+                        onChange={(val) => {
+                          console.log('val', val)
+                        }}
+                        min={0}
+                        max={10}
+                        skin={skins.s13}
+                        preciseMode={false}
+                      />
+                    </KnobContainer>
+                  </MainControl>
+                  <MainControl>
+                    <h3>LP</h3>
+                    <KnobContainer>
+                      <Knob
+                        unlockDistance={0}
+                        onChange={(val) => {
+                          console.log('val', val)
+                        }}
+                        min={0}
+                        max={10}
+                        skin={skins.s13}
+                        preciseMode={false}
+                      />
+                    </KnobContainer>
+                  </MainControl>
+                </Row>
+              </ControlSection>
+              <ControlSection style={{ marginTop: '42px', width: '240px' }}>
+                <h2>REVERB</h2>
+                <Row style={{ marginBottom: 0 }}>
+                  <Control>
+                    <h3>DECAY</h3>
+                    <KnobContainer>
+                      <Knob
+                        unlockDistance={0}
+                        onChange={(val) => {
+                          console.log('val', val)
+                        }}
+                        min={0}
+                        max={1}
+                        skin={skins.s13}
+                        preciseMode={false}
+                      />
+                      <span>{pitchValue}</span>
+                    </KnobContainer>
+                  </Control>
+                  <MainControl>
+                    <h3>DRY / WET</h3>
+                    <KnobContainer className='bigKnob'>
+                      <Knob
+                        unlockDistance={0}
+                        onChange={(val) => {
+                          console.log('val', val)
+                        }}
+                        min={0}
+                        max={1}
+                        skin={skins.s13}
+                        preciseMode={false}
+                      />
+                      <span>{channelConfig[currentChannel + 1] && channelConfig[currentChannel + 1].volume.toFixed(2)}</span>
+                    </KnobContainer>
+                  </MainControl>
+                  <Control>
+                    <h3>PRE-DELAY</h3>
+                    <KnobContainer>
+                      <Knob
+                        unlockDistance={0}
+                        onChange={(val) => {
+                          console.log('val', val)
+                        }}
+                        min={0}
+                        max={1}
+                        skin={skins.s13}
+                        preciseMode={false}
+                      />
+                      <span>{channelConfig[currentChannel + 1] && channelConfig[currentChannel + 1].release.toFixed(2)}</span>
+                    </KnobContainer>
+                  </Control>
+                </Row>
+              </ControlSection>
+            </div>
           </RowDivider>
           <RowDivider>
             <Channels samples={sampleFiles} playSample={playSample} currentChannel={currentChannel} />
