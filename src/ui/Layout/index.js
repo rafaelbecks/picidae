@@ -59,7 +59,9 @@ const Layout = (
     startSequencer,
     sequencerMode,
     setCurrentChannel,
-    setSequencerMode
+    setSequencerMode,
+    currentStep,
+    setCurrentStep
   }
 ) => {
   const sampleSelect = useRef(null)
@@ -68,9 +70,6 @@ const Layout = (
   const euclideanPattern = channelConfig[currentChannel + 1] ? channelConfig[currentChannel + 1].euclideanPattern : []
   const currentNotes = euclideanPattern.filter(beat => beat === 1).length
   const currentSteps = euclideanPattern.length
-  const reverbDecay = channelConfig[currentChannel + 1] && Number(channelConfig[currentChannel + 1].reverbDecay).toFixed(2)
-  const reverbWet = channelConfig[currentChannel + 1] && Number(channelConfig[currentChannel + 1].reverbWet).toFixed(2)
-  const reverbPreDelay = channelConfig[currentChannel + 1] && Number(channelConfig[currentChannel + 1].reverbPreDelay).toFixed(2)
 
   useEffect(() => {
     if (currentChannel !== -1) {
@@ -239,7 +238,7 @@ const Layout = (
 
             </DeviceColumn>
           </RowDivider>
-          <RowDivider flexStart spaceAround style={{ margin: '20px 0 50px 0' }}>
+          <RowDivider flexStart spaceAround style={{ margin: '20px 0' }}>
             <ControlSection>
               <h2>SEQUENCER</h2>
               <Row>
@@ -275,23 +274,12 @@ const Layout = (
               >
                 <SliderSwitch values={['EDIT', 'PLAY']} onChange={(val) => setSequencerMode(val)} />
               </Row>
-              <ControlSection>
-                <Row>
-                  <GreenScreenContainer>
-                    <h2>BANK</h2>
-                    <GreenScreen
-                      style={{ width: '150px', marginTop: '20px' }}
-                    >PATTERN #1
-                    </GreenScreen>
-                  </GreenScreenContainer>
-                </Row>
-              </ControlSection>
             </ControlSection>
             {euclideanPattern.length && (
               <>
                 <Circle size={euclideanPattern.length}>
                   {euclideanPattern.map((beat, index) => (
-                    <li key={index}><Led className={beat ? 'ledOn' : 'ledOff'} /></li>
+                    <li key={index}><Led className={beat || (currentStep === index && sequencerMode === 'PLAY') ? `ledOn${currentChannel}` : `ledOff${currentChannel}`} /></li>
                   ))}
                 </Circle>
                 <LissajousCurve src={lissajous} />
@@ -305,8 +293,8 @@ const Layout = (
                       })
                       onChangeConfig(currentChannel, 'euclideanPattern', arrayRotate(er.getPattern(currentNotes, currentSteps), Math.ceil(val)))
                     }}
-                    min={0}
-                    max={currentSteps}
+                    min={currentSteps}
+                    max={0}
                     value={rotationIndex[currentChannel]}
                     skin={skins.s13}
                     preciseMode={false}
@@ -316,65 +304,21 @@ const Layout = (
               </>
             )}
             <div>
-              <ControlSection style={{ marginTop: '42px', width: '240px' }}>
-                <h2>REVERB</h2>
-                <Row style={{ marginBottom: 0 }}>
-                  <Control>
-                    <h3>DECAY</h3>
-                    <KnobContainer>
-                      <Knob
-                        unlockDistance={0}
-                        onChange={(val) => {
-                          onChangeConfig(currentChannel, 'reverbDecay', val)
-                        }}
-                        min={0.1}
-                        max={5}
-                        skin={skins.s13}
-                        value={reverbDecay}
-                        preciseMode={false}
-                      />
-                      <span>{reverbDecay}</span>
-                    </KnobContainer>
-                  </Control>
-                  <MainControl>
-                    <h3>DRY / WET</h3>
-                    <KnobContainer className='bigKnob'>
-                      <Knob
-                        unlockDistance={0}
-                        onChange={(val) => {
-                          onChangeConfig(currentChannel, 'reverbWet', val)
-                        }}
-                        min={0}
-                        max={1}
-                        value={reverbWet}
-                        skin={skins.s13}
-                        preciseMode={false}
-                      />
-                      <span>{reverbWet}</span>
-                    </KnobContainer>
-                  </MainControl>
-                  <Control>
-                    <h3>PRE-DELAY</h3>
-                    <KnobContainer>
-                      <Knob
-                        unlockDistance={0}
-                        onChange={(val) => {
-                          onChangeConfig(currentChannel, 'reverbPreDelay', val)
-                        }}
-                        min={0}
-                        max={1}
-                        skin={skins.s13}
-                        preciseMode={false}
-                      />
-                      <span>{reverbPreDelay}</span>
-                    </KnobContainer>
-                  </Control>
+              <ControlSection>
+                <Row>
+                  <GreenScreenContainer>
+                    <h2>BANK</h2>
+                    <GreenScreen
+        style={{ width: '150px', marginTop: '20px' }}
+      >PATTERN #1
+      </GreenScreen>
+                  </GreenScreenContainer>
                 </Row>
               </ControlSection>
             </div>
           </RowDivider>
           <RowDivider>
-            <Channels samples={sampleFiles} playSample={playSample} currentChannel={currentChannel} sequencerMode={sequencerMode} setCurrentChannel={setCurrentChannel} />
+            <Channels samples={sampleFiles} playSample={playSample} onChangeConfig={onChangeConfig} currentChannel={currentChannel} sequencerMode={sequencerMode} setCurrentChannel={setCurrentChannel} />
           </RowDivider>
         </DeviceSection>
 

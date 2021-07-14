@@ -1,7 +1,8 @@
 import { Container, Step } from './styles'
+import { Led } from '../Leds/styles'
 
 const Channels = (props) => {
-  return (
+  return window.channelConfig && (
     <Container>
       <ul>
         {props.samples.map((sample, index) =>
@@ -13,6 +14,7 @@ const Channels = (props) => {
                 props.setCurrentChannel(index)
                 return
               }
+
               props.playSample(props.samples, index)
             }
           }
@@ -21,6 +23,12 @@ const Channels = (props) => {
                 {index + 1}
               </span>
             </Step>
+            <Led
+              onClick={() => {
+                props.onChangeConfig(index, 'enabled', !window.channelConfig[index + 1].enabled)
+              }}
+              className={window.channelConfig[index + 1] && window.channelConfig[index + 1].enabled ? `ledOn${index}` : `ledOff${index}`}
+            />
           </div>
 
         )}

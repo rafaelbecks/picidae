@@ -2,7 +2,7 @@
 
 Euclidean Rhythm Composer / Drum machine using Tone.js.
 
-![](https://ex-reality.s3.amazonaws.com/picidae2.png)
+![](https://ex-reality.s3.amazonaws.com/picidaeN.png)
 
 ## Running
 

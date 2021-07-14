@@ -12,17 +12,9 @@ const initialChannelConfig = {
   notes: -2,
   steps: 8,
   volume: -5,
-  lp: 0,
-  hp: 0,
   pitch: '440',
   release: 0.5,
-  filter: {
-    lp: 1500,
-    hp: 0
-  },
-  reverbDecay: 0.1,
-  reverbWet: 0,
-  reverbPreDelay: 0
+  enabled: false
 }
 
 function App () {
@@ -32,7 +24,7 @@ function App () {
   const [channelConfig, setChannelConfig] = useState({})
   const [currentChannel, setCurrentChannel] = useState(-1)
   const [sequencerMode, setSequencerMode] = useState('EDIT')
-  // const [currentStep, setCurrentStep] = useState(0)
+  const [currentStep, setCurrentStep] = useState(0)
   const [bpm, setBpm] = useState(120)
 
   const keyboard = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k']
@@ -54,10 +46,25 @@ function App () {
     }
   })
 
+  useKeyPress((key) => {
+    if (key === ' ') {
+      setSequencerMode(sequencerMode => {
+        if (sequencerMode === 'EDIT') { return 'PLAY' }
+        return 'EDIT'
+      })
+    }
+  })
+
   useEffect(async () => {
     const { data: availableSamples } = await axios('http://localhost:3002/sample-packs')
     setAvailableSamplePacks(availableSamples)
   }, [])
+
+  useEffect(() => {
+    if (sequencerMode === 'EDIT') {
+      setCurrentStep(0)
+    }
+  }, [sequencerMode])
 
   useEffect(() => {
     if (availableSamplePacks[0]) { onSelectSamplePack(0) }
@@ -72,13 +79,11 @@ function App () {
         urls: {
           A4: wavFile.default
         }
-      })
+      }).toDestination()
       samplePack.push(sample)
     }
     return samplePack
   }
-
-  const reverb = new Tone.Reverb()
 
   const playSample = (sampleFiles, index, selectChannel = true) => {
     if (index >= 0 && sampleFiles.length > 0) {
@@ -88,15 +93,6 @@ function App () {
       const sample = sampleFiles[index]
       const currentConfig = window.channelConfig[index + 1]
       sample.volume.value = currentConfig.volume
-
-      reverb.set({
-        decay: currentConfig.reverbDecay,
-        wet: currentConfig.reverbWet,
-        preDelay: currentConfig.reverbPreDelay
-      })
-
-      sample.chain(reverb, Tone.Destination)
-
       sample.triggerAttackRelease(currentConfig.pitch, currentConfig.release)
     }
   }
@@ -117,6 +113,7 @@ function App () {
   }
 
   const onChangeConfig = (index, key, value, callback = () => {}) => {
+    console.log('key', key)
     const newConfig = {
       [index + 1]: {
         ...channelConfig[index + 1],
@@ -135,22 +132,47 @@ function App () {
     window.sequencerTimer = setInterval(() => {
       const euclideanPattern1 = window.channelConfig[1].euclideanPattern
       const euclideanPattern2 = window.channelConfig[2].euclideanPattern
+      const euclideanPattern3 = window.channelConfig[3].euclideanPattern
+      const euclideanPattern4 = window.channelConfig[4].euclideanPattern
+      const euclideanPattern5 = window.channelConfig[5].euclideanPattern
+      const euclideanPattern6 = window.channelConfig[6].euclideanPattern
+      const euclideanPattern7 = window.channelConfig[7].euclideanPattern
+      const euclideanPattern8 = window.channelConfig[8].euclideanPattern
 
       if (step === euclideanPattern1.length) {
         step = 0
       }
 
-      if (euclideanPattern1[step] === 1) {
+      if (window.channelConfig[1].enabled && euclideanPattern1[step] === 1) {
         playSample(sampleFiles, 0, false)
       }
 
-      if (step === euclideanPattern2.length) {
-        step = 0
-      }
-
-      if (euclideanPattern2[step] === 1) {
+      if (window.channelConfig[2].enabled && euclideanPattern2[step] === 1) {
         playSample(sampleFiles, 1, false)
       }
+
+      if (window.channelConfig[3].enabled && euclideanPattern3[step] === 1) {
+        playSample(sampleFiles, 2, false)
+      }
+      if (window.channelConfig[4].enabled && euclideanPattern4[step] === 1) {
+        playSample(sampleFiles, 3, false)
+      }
+
+      if (window.channelConfig[5].enabled && euclideanPattern5[step] === 1) {
+        playSample(sampleFiles, 4, false)
+      }
+
+      if (window.channelConfig[6].enabled && euclideanPattern6[step] === 1) {
+        playSample(sampleFiles, 5, false)
+      }
+
+      if (window.channelConfig[7].enabled && euclideanPattern7[step] === 1) {
+        playSample(sampleFiles, 6, false)
+      }
+      if (window.channelConfig[8].enabled && euclideanPattern8[step] === 1) {
+        playSample(sampleFiles, 7, false)
+      }
+      setCurrentStep(step)
 
       step++
     }, ((60 / bpm) * 1000) / 4)
@@ -176,6 +198,8 @@ function App () {
         sequencerMode={sequencerMode}
         setSequencerMode={setSequencerMode}
         setCurrentChannel={setCurrentChannel}
+        currentStep={currentStep}
+        setCurrentStep={setCurrentStep}
       />
     </div>
   )

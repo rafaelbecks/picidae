@@ -8,6 +8,13 @@ const Container = styled.div`
         list-style: none;
         display: flex;
         padding: 0;
+
+        > div {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center
+        }
     }
 `
 
@@ -24,7 +31,7 @@ const Step = styled.li`
     display: flex;
     justify-content: center;
     align-items: center;
-    // border-radius: 6px;
+    margin-bottom: 5px;
 `
 
 export { Container, Step }

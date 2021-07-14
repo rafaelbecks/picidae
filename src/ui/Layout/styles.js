@@ -212,6 +212,7 @@ const KnobContainer = styled.div`
     justify-content: center;
     flex-direction: column;
     align-items: center;
+    z-index: 30;
     span {
       color: #fff;
       font-size: 9px;
@@ -254,9 +255,9 @@ const Circle = styled.ul`
      border-radius: 50%;
      padding: 0;
      list-style: none;
-     top: 98px;
-     left: -5px;
-     transform: rotate(0deg) !important;
+     top: 11px;
+     left: 94px;
+     transform: rotate(-90deg) !important;
 
     >  * {
         display: block;
@@ -280,6 +281,15 @@ const Circle = styled.ul`
     }
     }
 
+`
+
+const KnobSteps = styled.div`
+background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='100' ry='100' stroke='white' stroke-width='13' stroke-dasharray='1%2c 13' stroke-dashoffset='0' stroke-linecap='butt'/%3e%3c/svg%3e");
+border-radius: 100px;
+width: 71px;
+height: 71px;
+position: absolute;
+top: 33px;
 `
 
 export {
@@ -311,5 +321,6 @@ export {
   Column,
   RowDivider,
   GreenScreenInput,
-  ControlSection
+  ControlSection,
+  KnobSteps
 }
