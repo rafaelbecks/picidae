@@ -10,6 +10,7 @@ import lissajous from '../../assets/lissajous.png'
 
 import SliderSwitch from '../../components/SliderSwitch'
 import NumericControl from '../../components/NumericControl'
+import { useKeyPress } from '../../hooks'
 
 import { Led } from '../Leds/styles'
 import { arrayRotate } from '../../utils'
@@ -70,6 +71,15 @@ const Layout = (
   const euclideanPattern = channelConfig[currentChannel + 1] ? channelConfig[currentChannel + 1].euclideanPattern : []
   const currentNotes = euclideanPattern.filter(beat => beat === 1).length
   const currentSteps = euclideanPattern.length
+
+  useKeyPress((key) => {
+    if (key === ' ') {
+      setSequencerMode(sequencerMode => {
+        if (sequencerMode === 'EDIT') { return 'PLAY' }
+        return 'EDIT'
+      })
+    }
+  })
 
   useEffect(() => {
     if (currentChannel !== -1) {
@@ -272,7 +282,9 @@ const Layout = (
                   height: 'fit-content'
                 }}
               >
-                <SliderSwitch values={['EDIT', 'PLAY']} onChange={(val) => setSequencerMode(val)} />
+                <SliderSwitch
+                  values={['EDIT', 'PLAY']} onChange={(val) => setSequencerMode(val)} value={sequencerMode}
+                />
               </Row>
             </ControlSection>
             {euclideanPattern.length && (
@@ -309,9 +321,9 @@ const Layout = (
                   <GreenScreenContainer>
                     <h2>BANK</h2>
                     <GreenScreen
-        style={{ width: '150px', marginTop: '20px' }}
-      >PATTERN #1
-      </GreenScreen>
+                      style={{ width: '150px', marginTop: '20px' }}
+                    >PATTERN #1
+                    </GreenScreen>
                   </GreenScreenContainer>
                 </Row>
               </ControlSection>

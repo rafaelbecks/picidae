@@ -46,15 +46,6 @@ function App () {
     }
   })
 
-  useKeyPress((key) => {
-    if (key === ' ') {
-      setSequencerMode(sequencerMode => {
-        if (sequencerMode === 'EDIT') { return 'PLAY' }
-        return 'EDIT'
-      })
-    }
-  })
-
   useEffect(async () => {
     const { data: availableSamples } = await axios('http://localhost:3002/sample-packs')
     setAvailableSamplePacks(availableSamples)
@@ -113,7 +104,6 @@ function App () {
   }
 
   const onChangeConfig = (index, key, value, callback = () => {}) => {
-    console.log('key', key)
     const newConfig = {
       [index + 1]: {
         ...channelConfig[index + 1],
