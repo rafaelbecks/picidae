@@ -10,12 +10,11 @@ const Channels = (props) => {
             <Step
               onClick={
             () => {
-              if (props.sequencerMode === 'PLAY') {
+              if (props.sequencerMode === 'PLAY' || props.playMode === 'MIDI') {
                 props.setCurrentChannel(index)
                 return
               }
-
-              props.playSample(props.samples, index)
+              if (props.playMode === 'SAMPLES') { props.playSample(props.samples, index) }
             }
           }
             >

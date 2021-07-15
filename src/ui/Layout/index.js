@@ -34,7 +34,8 @@ import {
   Circle,
   LissajousCurve,
   RowDivider,
-  ControlSection
+  ControlSection,
+  Button
 } from './styles'
 
 import Channels from '../Channels'
@@ -62,13 +63,27 @@ const Layout = (
     setCurrentChannel,
     setSequencerMode,
     currentStep,
-    setCurrentStep
+    setCurrentStep,
+    playMode,
+    setPlayMode,
+    playModeConfiguration,
+    midiConfig,
+    onChangeMIDI,
+    midiDevices,
+    onSelectMidi,
+    currentMidiDevice
   }
 ) => {
   const sampleSelect = useRef(null)
   const [rotationIndex, setRotationIndex] = useState({})
   const pitchValue = channelConfig[currentChannel + 1] && Number(channelConfig[currentChannel + 1].pitch).toFixed(2)
+  const sampleVolumeValue = channelConfig[currentChannel + 1] && channelConfig[currentChannel + 1].volume.toFixed(2)
   const euclideanPattern = channelConfig[currentChannel + 1] ? channelConfig[currentChannel + 1].euclideanPattern : []
+  const noteValue = midiConfig[currentChannel + 1] ? midiConfig[currentChannel + 1].note : 12
+  const midiVolumeValue = midiConfig[currentChannel + 1] ? midiConfig[currentChannel + 1].volume : 0.5
+  const sampleReleaseValue = channelConfig[currentChannel + 1] && channelConfig[currentChannel + 1].release.toFixed(2)
+  const midiReleaseValue = midiConfig[currentChannel + 1] && midiConfig[currentChannel + 1].release.toFixed(2)
+
   const currentNotes = euclideanPattern.filter(beat => beat === 1).length
   const currentSteps = euclideanPattern.length
 
@@ -119,22 +134,35 @@ const Layout = (
               <h2>PLAY MODE</h2>
               <Row style={{ height: '96px' }}>
                 <Column>
-                  <SliderSwitch values={['SAMPLES', 'MIDI']} onChange={(val) => console.log(val)} />
+                  <SliderSwitch value={playMode} values={['SAMPLES', 'MIDI']} onChange={(val) => setPlayMode(val)} />
                   <GreenScreenContainer>
                     <GreenScreen
                       style={{ width: '150px' }}
-                    >{availableSamplePacks[currentSamplePack]
-                      ? availableSamplePacks[currentSamplePack]
-                      : 'NO SAMPLES SELECTED'}
+                    >{
+
+                    playMode === 'SAMPLES'
+                      ? (availableSamplePacks[currentSamplePack]
+                          ? availableSamplePacks[currentSamplePack]
+                          : `NO ${playMode} SELECTED`)
+                      : midiDevices[currentMidiDevice] ? midiDevices[currentMidiDevice].name : 'NO DEVICE SELECTED'
+                    }
                     </GreenScreen>
                     <DeviceSelect
                       ref={sampleSelect} onChange={async (e) => {
-                        await onSelectSamplePack(Number(e.target.value))
+                        if (playMode === 'SAMPLES') {
+                          await onSelectSamplePack(Number(e.target.value))
+                          return
+                        }
+
+                        onSelectMidi(e)
                       }}
-                      value={currentSamplePack}
+                      value={playMode === 'SAMPLES' ? currentSamplePack : currentMidiDevice}
                     >
-                      <option value='-1'>No samples selected </option>
-                      {availableSamplePacks.map((item, index) => (<option value={index} key={index}>{item}</option>))}
+                      <option value='-1'>No {playMode.toLowerCase()} selected </option>
+
+                      {playMode === 'SAMPLES'
+                        ? availableSamplePacks.map((item, index) => (<option value={index} key={index}>{item}</option>))
+                        : midiDevices.map(({ id, name }, index) => (<option value={index} key={id}>{name}</option>))}
                     </DeviceSelect>
                   </GreenScreenContainer>
 
@@ -201,15 +229,20 @@ const Layout = (
                     <Knob
                       unlockDistance={0}
                       onChange={(val) => {
-                        onChangeConfig(currentChannel, 'pitch', String(val))
+                        if (playMode === 'SAMPLES') {
+                          onChangeConfig(currentChannel, 'pitch', String(val))
+                          return
+                        }
+
+                        onChangeMIDI(currentChannel, 'note', Math.ceil(val))
                       }}
-                      min={220}
-                      max={880}
-                      value={pitchValue}
+                      min={playModeConfiguration[playMode].noteRange[0]}
+                      max={playModeConfiguration[playMode].noteRange[1]}
+                      value={playMode === 'SAMPLES' ? pitchValue : noteValue}
                       skin={skins.s13}
                       preciseMode={false}
                     />
-                    <span>{pitchValue}</span>
+                    <span>{playMode === 'SAMPLES' ? pitchValue : playModeConfiguration[playMode].scale[noteValue]}</span>
                   </KnobContainer>
                 </Control>
                 <MainControl>
@@ -218,14 +251,20 @@ const Layout = (
                     <Knob
                       unlockDistance={0}
                       onChange={(val) => {
-                        onChangeConfig(currentChannel, 'volume', val)
+                        if (playMode === 'SAMPLES') {
+                          onChangeConfig(currentChannel, 'volume', val)
+                          return
+                        }
+
+                        onChangeMIDI(currentChannel, 'volume', Number(val))
                       }}
-                      min={-15}
-                      max={4}
+                      min={playModeConfiguration[playMode].volumeRange[0]}
+                      max={playModeConfiguration[playMode].volumeRange[1]}
+                      value={playMode === 'SAMPLES' ? sampleVolumeValue : midiVolumeValue}
                       skin={skins.s13}
                       preciseMode={false}
                     />
-                    <span>{channelConfig[currentChannel + 1] && channelConfig[currentChannel + 1].volume.toFixed(2)}</span>
+                    <span>{playMode === 'SAMPLES' ? sampleVolumeValue : midiVolumeValue.toFixed(2)}</span>
                   </KnobContainer>
                 </MainControl>
                 <Control>
@@ -234,14 +273,20 @@ const Layout = (
                     <Knob
                       unlockDistance={0}
                       onChange={(val) => {
-                        onChangeConfig(currentChannel, 'release', val)
+                        if (playMode === 'SAMPLES') {
+                          onChangeConfig(currentChannel, 'release', val)
+                          return
+                        }
+
+                        onChangeMIDI(currentChannel, 'release', Number(val))
                       }}
                       min={0}
                       max={1}
+                      value={playMode === 'SAMPLES' ? sampleReleaseValue : midiReleaseValue}
                       skin={skins.s13}
                       preciseMode={false}
                     />
-                    <span>{channelConfig[currentChannel + 1] && channelConfig[currentChannel + 1].release.toFixed(2)}</span>
+                    <span>{playMode === 'SAMPLES' ? sampleReleaseValue : midiReleaseValue}</span>
                   </KnobContainer>
                 </Control>
               </Row>
@@ -317,20 +362,21 @@ const Layout = (
             )}
             <div>
               <ControlSection>
-                <Row>
+                <Row style={{ marginTop: '0px', height: 'auto' }}>
                   <GreenScreenContainer>
                     <h2>BANK</h2>
                     <GreenScreen
-                      style={{ width: '150px', marginTop: '20px' }}
+                      style={{ width: '150px', margin: '20px 0' }}
                     >PATTERN #1
                     </GreenScreen>
                   </GreenScreenContainer>
                 </Row>
+                <Button>SAVE</Button>
               </ControlSection>
             </div>
           </RowDivider>
           <RowDivider>
-            <Channels samples={sampleFiles} playSample={playSample} onChangeConfig={onChangeConfig} currentChannel={currentChannel} sequencerMode={sequencerMode} setCurrentChannel={setCurrentChannel} />
+            <Channels samples={sampleFiles} playSample={playSample} onChangeConfig={onChangeConfig} currentChannel={currentChannel} sequencerMode={sequencerMode} setCurrentChannel={setCurrentChannel} playMode={playMode} />
           </RowDivider>
         </DeviceSection>
 

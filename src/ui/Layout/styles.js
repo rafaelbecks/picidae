@@ -284,12 +284,32 @@ const Circle = styled.ul`
 `
 
 const KnobSteps = styled.div`
-background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='100' ry='100' stroke='white' stroke-width='13' stroke-dasharray='1%2c 13' stroke-dashoffset='0' stroke-linecap='butt'/%3e%3c/svg%3e");
-border-radius: 100px;
-width: 71px;
-height: 71px;
-position: absolute;
-top: 33px;
+    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='100' ry='100' stroke='white' stroke-width='13' stroke-dasharray='1%2c 13' stroke-dashoffset='0' stroke-linecap='butt'/%3e%3c/svg%3e");
+    border-radius: 100px;
+    width: 71px;
+    height: 71px;
+    position: absolute;
+    top: 33px;
+`
+
+const Button = styled.button`
+    background: rgba(196,196,196, 0.2);
+    box-sizing: border-box;
+    color: #fff;
+    font-family: 'Monda';
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    cursor: pointer;
+    color: #FAFFBC;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    width: 170px;
+    margin: 0 auto;
+    padding: 4px 0;
+    position: relative;
+    bottom: 5px;
 `
 
 export {
@@ -322,5 +342,6 @@ export {
   RowDivider,
   GreenScreenInput,
   ControlSection,
-  KnobSteps
+  KnobSteps,
+  Button
 }
