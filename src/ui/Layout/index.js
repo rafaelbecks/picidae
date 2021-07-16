@@ -311,7 +311,7 @@ const Layout = (
                 </Control>
 
                 <Control className='inputWithMask'>
-                  <h3 className='smallMargin'>DIVIDER</h3>
+                  <h3 className='smallMargin'>BEAT/STEPS</h3>
                   <GreenScreenContainer row>
                     <NumericControl
                       width='30px'

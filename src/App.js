@@ -198,7 +198,7 @@ function App () {
   }
 
   const startSequencer = () => {
-    let step = 0
+    const steps = [0, 0, 0, 0, 0, 0, 0, 0]
     window.sequencerTimer = setInterval(() => {
       const euclideanPattern1 = window.channelConfig[1].euclideanPattern
       const euclideanPattern2 = window.channelConfig[2].euclideanPattern
@@ -209,11 +209,16 @@ function App () {
       const euclideanPattern7 = window.channelConfig[7].euclideanPattern
       const euclideanPattern8 = window.channelConfig[8].euclideanPattern
 
-      if (step === euclideanPattern1.length) {
-        step = 0
-      }
+      if (steps[0] === euclideanPattern1.length) steps[0] = 0
+      if (steps[1] === euclideanPattern2.length) steps[1] = 0
+      if (steps[2] === euclideanPattern3.length) steps[2] = 0
+      if (steps[3] === euclideanPattern4.length) steps[3] = 0
+      if (steps[4] === euclideanPattern5.length) steps[4] = 0
+      if (steps[5] === euclideanPattern6.length) steps[5] = 0
+      if (steps[6] === euclideanPattern7.length) steps[6] = 0
+      if (steps[7] === euclideanPattern8.length) steps[7] = 0
 
-      if (window.channelConfig[1].enabled && euclideanPattern1[step] === 1) {
+      if (window.channelConfig[1].enabled && euclideanPattern1[steps[0]] === 1) {
         if (playMode === 'SAMPLES') {
           playSample(sampleFiles, 0, false)
         } else {
@@ -221,7 +226,7 @@ function App () {
         }
       }
 
-      if (window.channelConfig[2].enabled && euclideanPattern2[step] === 1) {
+      if (window.channelConfig[2].enabled && euclideanPattern2[steps[1]] === 1) {
         if (playMode === 'SAMPLES') {
           playSample(sampleFiles, 1, false)
         } else {
@@ -229,14 +234,14 @@ function App () {
         }
       }
 
-      if (window.channelConfig[3].enabled && euclideanPattern3[step] === 1) {
+      if (window.channelConfig[3].enabled && euclideanPattern3[steps[2]] === 1) {
         if (playMode === 'SAMPLES') {
           playSample(sampleFiles, 2, false)
         } else {
           sendMidiEvent(midiConfig[3].note, midiConfig[3].volume, currentMidiDevice, midiConfig[3].release)
         }
       }
-      if (window.channelConfig[4].enabled && euclideanPattern4[step] === 1) {
+      if (window.channelConfig[4].enabled && euclideanPattern4[steps[3]] === 1) {
         if (playMode === 'SAMPLES') {
           playSample(sampleFiles, 3, false)
         } else {
@@ -244,7 +249,7 @@ function App () {
         }
       }
 
-      if (window.channelConfig[5].enabled && euclideanPattern5[step] === 1) {
+      if (window.channelConfig[5].enabled && euclideanPattern5[steps[4]] === 1) {
         if (playMode === 'SAMPLES') {
           playSample(sampleFiles, 4, false)
         } else {
@@ -252,7 +257,7 @@ function App () {
         }
       }
 
-      if (window.channelConfig[6].enabled && euclideanPattern6[step] === 1) {
+      if (window.channelConfig[6].enabled && euclideanPattern6[steps[5]] === 1) {
         if (playMode === 'SAMPLES') {
           playSample(sampleFiles, 5, false)
         } else {
@@ -260,14 +265,14 @@ function App () {
         }
       }
 
-      if (window.channelConfig[7].enabled && euclideanPattern7[step] === 1) {
+      if (window.channelConfig[7].enabled && euclideanPattern7[steps[6]] === 1) {
         if (playMode === 'SAMPLES') {
           playSample(sampleFiles, 6, false)
         } else {
           sendMidiEvent(midiConfig[7].note, midiConfig[7].volume, currentMidiDevice, midiConfig[7].release)
         }
       }
-      if (window.channelConfig[8].enabled && euclideanPattern8[step] === 1) {
+      if (window.channelConfig[8].enabled && euclideanPattern8[steps[7]] === 1) {
         if (playMode === 'SAMPLES') {
           playSample(sampleFiles, 7, false)
         } else {
@@ -275,9 +280,9 @@ function App () {
         }
       }
 
-      setCurrentStep(step)
+      setCurrentStep(steps[window.currentChannel])
 
-      step++
+      steps[0]++; steps[1]++; steps[2]++; steps[3]++; steps[4]++; steps[5]++; steps[6]++; steps[7]++
     }, ((60 / bpm) * 1000) / timeDivider)
   }
 
