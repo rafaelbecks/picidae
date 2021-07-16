@@ -24,7 +24,7 @@ const allNotes = getAllNotes3Octaves()
 
 const sendMidiEvent = (note, velocity, midiController, duration = null) => {
   if (note && midiController !== -1) {
-    WebMidi.outputs[midiController].playNote([allNotes[note]], 1, { velocity, duration })
+    WebMidi.outputs[midiController].playNote([allNotes[note]], 1, { velocity, duration: duration * 1000 })
   }
 }
 
