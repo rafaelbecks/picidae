@@ -71,7 +71,9 @@ const Layout = (
     onChangeMIDI,
     midiDevices,
     onSelectMidi,
-    currentMidiDevice
+    currentMidiDevice,
+    timeDivider,
+    setTimeDivider
   }
 ) => {
   const sampleSelect = useRef(null)
@@ -308,13 +310,14 @@ const Layout = (
                   </GreenScreenContainer>
                 </Control>
 
-                <Control>
+                <Control className='inputWithMask'>
                   <h3 className='smallMargin'>DIVIDER</h3>
                   <GreenScreenContainer row>
                     <NumericControl
                       width='30px'
-                      minValue={0} maxValue={10} initialValue={0.5}
-                      onChange={(value) => console.log(value)}
+                      mask={['0', '1', '½', '⅓', '¼', '⅕', '⅙', '⅐']}
+                      minValue={2} maxValue={7} initialValue={timeDivider}
+                      onChange={(value) => setTimeDivider(value)}
                     />
                   </GreenScreenContainer>
                 </Control>

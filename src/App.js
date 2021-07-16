@@ -46,6 +46,7 @@ function App () {
   const [midiConfig, setMidiConfig] = useState({})
   const [midiDevices, setMidiDevices] = useState([])
   const [currentMidiDevice, setCurrentMidiDevice] = useState(-1)
+  const [timeDivider, setTimeDivider] = useState(4)
 
   const keyboard = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k']
 
@@ -277,7 +278,7 @@ function App () {
       setCurrentStep(step)
 
       step++
-    }, ((60 / bpm) * 1000) / 4)
+    }, ((60 / bpm) * 1000) / timeDivider)
   }
 
   window.channelConfig = channelConfig
@@ -310,6 +311,8 @@ function App () {
         midiDevices={midiDevices}
         onSelectMidi={onSelectMidi}
         currentMidiDevice={currentMidiDevice}
+        timeDivider={timeDivider}
+        setTimeDivider={setTimeDivider}
       />
     </div>
   )

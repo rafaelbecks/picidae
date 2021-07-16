@@ -83,6 +83,10 @@ h3{
   margin: 8px 0;
 }
 
+.inputWithMask input {
+  font-size: 18px;
+}
+
 .ledOn {
   background: #00FF85;
   box-shadow: 0px 0px 11px 1px #00ff85;
