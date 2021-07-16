@@ -9,7 +9,6 @@ import { useKeyPress } from './hooks'
 import { getAllNotes3Octaves, initMidi, sendMidiEvent } from './midi'
 
 const initialChannelConfig = {
-  euclideanPattern: er.getPattern(4, 16),
   notes: -2,
   steps: 8,
   volume: -5,
@@ -31,6 +30,8 @@ const playModeConfiguration = {
     duration: [0, 1]
   }
 }
+
+let firstTimeLoad = true
 
 function App () {
   const [currentSamplePack, setCurrentSamplePack] = useState(-1)
@@ -95,7 +96,6 @@ function App () {
       }))
 
       const midiControllers = await initMidi()
-      console.log('midiControllers', midiControllers)
       setMidiDevices(midiControllers)
       setMidiConfig(midiConfigObject)
     }
@@ -130,17 +130,38 @@ function App () {
 
   const onSelectSamplePack = async (index) => {
     if (index === -1) return
+
     setCurrentSamplePack(index)
     const samplePack = await getSamplePack(availableSamplePacks[index])
     setSampleFiles(samplePack)
 
-    const channelConfigObject = Array.from(Array(samplePack.length + 1)).reduce((ac, item, channelIndex) => ({
-      ...ac,
-      [channelIndex]: initialChannelConfig
-    }))
+    const channelObject = {}
+    const channelConfigObject = Array.from(Array(samplePack.length + 1)).reduce((ac, item, channelIndex) => {
+      if (firstTimeLoad) {
+        channelObject[channelIndex] = {
+          ...initialChannelConfig,
+          euclideanPattern: er.getPattern(4, 16)
+        }
+      } else {
+        channelObject[channelIndex] = {
+          ...channelConfig[channelIndex]
+        }
+      }
+
+      return {
+        ...ac,
+        [channelIndex]: channelObject[channelIndex]
+      }
+    }
+    )
+
+    if (firstTimeLoad) {
+      setCurrentChannel(0)
+    }
+
+    firstTimeLoad = false
 
     setChannelConfig(channelConfigObject)
-    setCurrentChannel(0)
   }
 
   const onChangeConfig = (index, key, value, callback = () => {}) => {
@@ -192,7 +213,6 @@ function App () {
       }
 
       if (window.channelConfig[1].enabled && euclideanPattern1[step] === 1) {
-        console.log('playMode', midiConfig[1].note)
         if (playMode === 'SAMPLES') {
           playSample(sampleFiles, 0, false)
         } else {

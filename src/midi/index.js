@@ -24,7 +24,6 @@ const allNotes = getAllNotes3Octaves()
 
 const sendMidiEvent = (note, velocity, midiController, duration = null) => {
   if (note && midiController !== -1) {
-    console.log(`%c sending chord ${allNotes[note] + velocity}`, 'background: #222; color: #bada55')
     WebMidi.outputs[midiController].playNote([allNotes[note]], 1, { velocity, duration })
   }
 }
