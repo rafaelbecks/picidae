@@ -1,8 +1,8 @@
 # PICIDAE
 
-Euclidean Rhythm Composer / Drum machine using Tone.js.
+Euclidean Rhythm Composer / Drum machine using Tone.js. [WIP]
 
-![](https://ex-reality.s3.amazonaws.com/picidaeN.png)
+![](https://ex-reality.s3.amazonaws.com/picidaeN2.jpg)
 
 ## Running
 
