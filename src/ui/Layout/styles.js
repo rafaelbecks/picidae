@@ -312,6 +312,13 @@ const Button = styled.button`
     bottom: 5px;
 `
 
+const RandomButtonStyles = {
+    position: 'relative',
+    top: '33px',
+    width: '76px',
+    fontSize: '12px'
+}
+
 export {
   DeviceLayout,
   Container,
@@ -343,5 +350,6 @@ export {
   GreenScreenInput,
   ControlSection,
   KnobSteps,
-  Button
+  Button,
+  RandomButtonStyles
 }

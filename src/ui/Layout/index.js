@@ -13,7 +13,7 @@ import NumericControl from '../../components/NumericControl'
 import { useKeyPress } from '../../hooks'
 
 import { Led } from '../Leds/styles'
-import { arrayRotate } from '../../utils'
+import { arrayRotate, getRandomInt } from '../../utils'
 
 import {
   DeviceLayout,
@@ -35,7 +35,8 @@ import {
   LissajousCurve,
   RowDivider,
   ControlSection,
-  Button
+  Button,
+  RandomButtonStyles
 } from './styles'
 
 import Channels from '../Channels'
@@ -186,7 +187,6 @@ const Layout = (
                           [currentChannel]: 0
                         })
                         onChangeConfig(currentChannel, 'euclideanPattern', er.getPattern(currentNotes, steps))
-                        // onChangeConfig(currentChannel, 'rotationIndex', 0)
                       }}
                       min={currentNotes}
                       max={16}
@@ -220,8 +220,21 @@ const Layout = (
                   </KnobContainer>
                 </MainControl>
               </Row>
+              <Button style={RandomButtonStyles}
+                onClick={() => {
+                    const steps = getRandomInt(4,16)
+                    const notes = getRandomInt(1,steps)
+                    const rotation = getRandomInt(0, 16)
+                    setRotationIndex({
+                      ...rotationIndex,
+                      [currentChannel]: rotation
+                    })
+                    onChangeConfig(currentChannel, 'euclideanPattern', arrayRotate(er.getPattern(notes, steps), Math.ceil(rotation)))
 
+                }}
+              >RANDOM</Button>
             </DeviceColumn>
+
             <DeviceColumn>
               <h2>CHANNEL</h2>
               <Row style={{ marginBottom: 0 }}>
