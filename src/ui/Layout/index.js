@@ -134,10 +134,10 @@ const Layout = (
         <DeviceSection>
           <RowDivider>
             <DeviceColumn>
-              <h2>PLAY MODE</h2>
+              <h2>MIDI DEVICE</h2>
               <Row style={{ height: '96px' }}>
                 <Column>
-                  <SliderSwitch value={playMode} values={['SAMPLES', 'MIDI']} onChange={(val) => setPlayMode(val)} />
+                  {/* <SliderSwitch value={playMode} values={['SAMPLES', 'MIDI']} onChange={(val) => setPlayMode(val)} /> */}
                   <GreenScreenContainer>
                     <GreenScreen
                       style={{ width: '150px' }}

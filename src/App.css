@@ -1,4 +1,16 @@
 
+body {
+  overflow: hidden;
+  background: url('../src/assets/wood.jpg');
+  background-size: cover;
+  background-size: cover;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    width: 100vw;
+    height: 100vh
+}
+
 .App {
   text-align: center;
 }

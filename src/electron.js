@@ -16,8 +16,8 @@ function createWindow () {
   // Create the browser window.
   // fileAppServer.initFileServer()
   mainWindow = new BrowserWindow({
-    width: 783,
-    height: 703,
+    width: 704,
+    height: 632,
     titleBarStyle: 'hiddenInset',
     resizable: false,
     title: 'PICIDAE',

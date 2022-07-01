@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { useState, useEffect } from 'react'
 import er from 'euclidean-rhythms'
 import * as Tone from 'tone'
@@ -35,12 +34,12 @@ let firstTimeLoad = true
 
 function App () {
   const [currentSamplePack, setCurrentSamplePack] = useState(-1)
-  const [availableSamplePacks, setAvailableSamplePacks] = useState([])
+  const [availableSamplePacks, setAvailableSamplePacks] = useState(["DFAM","peaks","tekdrum"])
   const [sampleFiles, setSampleFiles] = useState([])
   const [channelConfig, setChannelConfig] = useState({})
   const [currentChannel, setCurrentChannel] = useState(-1)
   const [sequencerMode, setSequencerMode] = useState('EDIT')
-  const [playMode, setPlayMode] = useState('SAMPLES')
+  const [playMode, setPlayMode] = useState('MIDI')
   const [currentStep, setCurrentStep] = useState(0)
   const [bpm, setBpm] = useState(120)
   const [midiConfig, setMidiConfig] = useState({})
@@ -70,22 +69,14 @@ function App () {
     }
   })
 
-  useEffect(async () => {
-    const { data: availableSamples } = await axios('http://localhost:3002/sample-packs')
-    setAvailableSamplePacks(availableSamples)
-  }, [])
-
   useEffect(() => {
     if (sequencerMode === 'EDIT') {
       setCurrentStep(0)
     }
   }, [sequencerMode])
 
-  useEffect(() => {
-    if (availableSamplePacks[0]) { onSelectSamplePack(0) }
-  }, [availableSamplePacks])
-
   useEffect(async () => {
+    initChannels()
     if (playMode === 'MIDI') {
       const midiConfigObject = Array.from(Array(9)).reduce((ac, item, channelIndex) => ({
         ...ac,
@@ -99,8 +90,9 @@ function App () {
       const midiControllers = await initMidi()
       setMidiDevices(midiControllers)
       setMidiConfig(midiConfigObject)
+      window.midiConfig = midiConfigObject;
     }
-  }, [playMode])
+  }, [])
 
   const getSamplePack = async (name) => {
     if (!name) return
@@ -129,15 +121,9 @@ function App () {
     }
   }
 
-  const onSelectSamplePack = async (index) => {
-    if (index === -1) return
-
-    setCurrentSamplePack(index)
-    const samplePack = await getSamplePack(availableSamplePacks[index])
-    setSampleFiles(samplePack)
-
+  const initChannels = async (index) => {
     const channelObject = {}
-    const channelConfigObject = Array.from(Array(samplePack.length + 1)).reduce((ac, item, channelIndex) => {
+    const channelConfigObject = Array.from(Array(9)).reduce((ac, item, channelIndex) => {
       if (firstTimeLoad) {
         channelObject[channelIndex] = {
           ...initialChannelConfig,
@@ -153,8 +139,7 @@ function App () {
         ...ac,
         [channelIndex]: channelObject[channelIndex]
       }
-    }
-    )
+    })
 
     if (firstTimeLoad) {
       setCurrentChannel(0)
@@ -191,6 +176,8 @@ function App () {
       ...midiConfig,
       ...newConfig
     })
+
+    window.midiConfig = {...midiConfig, ...newConfig}
   }
 
   const onSelectMidi = (e) => {
@@ -206,7 +193,7 @@ function App () {
       if (playMode === 'SAMPLES') {
         playSample(sampleFiles, channelIndex, false)
       } else {
-        sendMidiEvent(midiConfig[channelIndex + 1].note, midiConfig[channelIndex + 1].volume, currentMidiDevice, midiConfig[channelIndex + 1].release)
+        sendMidiEvent(window.midiConfig[channelIndex + 1].note, window.midiConfig[channelIndex + 1].volume, currentMidiDevice, window.midiConfig[channelIndex + 1].release)
       }
     }
 
@@ -230,8 +217,7 @@ function App () {
       <Layout
         availableSamplePacks={availableSamplePacks}
         currentSamplePack={currentSamplePack}
-        onSelectSamplePack={onSelectSamplePack}
-        sampleFiles={sampleFiles}
+        sampleFiles={Array.from(Array(8))}
         playSample={playSample}
         onChangeConfig={onChangeConfig}
         channelConfig={channelConfig}

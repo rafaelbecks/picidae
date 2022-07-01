@@ -13,6 +13,7 @@
   },
   "main": "src/electron.js",
   "scripts": {
+    "start:https": "BROWSER=false HTTPS=true SSL_CRT_FILE=../local-certs/localhost+2.pem SSL_KEY_FILE=../local-certs/localhost+2-key.pem concurrently -n \"File server start,Client start\" -c \"blue,green\"  \"cd fileServer && yarn start\" \"react-scripts start\"",
     "start": "concurrently -n \"File server start,Client start\" -c \"blue,green\"  \"cd fileServer && yarn start\" \"react-scripts start\"",
     "start:server": "cd fileServer && yarn start",
     "build": "react-scripts build",
