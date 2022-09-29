@@ -177,6 +177,7 @@ function App () {
       ...channelConfig,
       ...newConfig
     })
+    window.channelConfig = {...channelConfig, ...newConfig }
   }
 
   const onChangeMIDI = (index, key, value, callback = () => {}) => {
