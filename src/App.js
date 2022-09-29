@@ -191,6 +191,8 @@ function App () {
       ...midiConfig,
       ...newConfig
     })
+
+    window.midiConfig = {...midiConfig, ...newConfig}
   }
 
   const onSelectMidi = (e) => {
@@ -206,7 +208,7 @@ function App () {
       if (playMode === 'SAMPLES') {
         playSample(sampleFiles, channelIndex, false)
       } else {
-        sendMidiEvent(midiConfig[channelIndex + 1].note, midiConfig[channelIndex + 1].volume, currentMidiDevice, midiConfig[channelIndex + 1].release)
+        sendMidiEvent(window.midiConfig[channelIndex + 1].note, window.midiConfig[channelIndex + 1].volume, currentMidiDevice, window.midiConfig[channelIndex + 1].release)
       }
     }
 
